@@ -19,7 +19,9 @@ const fetch = (url, options = {}) => {
     // params control
     if (params) {
         Object.keys(params).forEach((key) => {
-            _url.searchParams.append(key, params[key])
+            if (params[key]) {
+                _url.searchParams.append(key, params[key])
+            }
         })
     }
 

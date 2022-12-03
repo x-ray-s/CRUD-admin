@@ -4,7 +4,7 @@
         <div class="p-4 overflow-y-auto w-80 bg-base-100 text-base-content">
             <div
                 class="form-control w-full max-w-xs"
-                v-for="field in store.filterFields"
+                v-for="field in fields"
                 :key="field.name"
             >
                 <label class="label">
@@ -13,46 +13,16 @@
                         >*</span
                     >
                 </label>
-                <input
-                    v-if="isUpload(field.name)"
-                    type="file"
-                    class="file-input file-input-bordered w-full max-w-xs"
-                    @change="fileHandler($event, field.name)"
-                />
-                <input
-                    v-else-if="field.type === 'Boolean'"
-                    type="checkbox"
-                    class="checkbox"
-                    v-model="payload[field.name]"
-                />
-                <input
-                    v-else-if="field.type === 'DateTime'"
-                    type="datetime-local"
-                    step="1"
-                    class="input input-bordered w-full max-w-xs"
-                    v-on:change="selectHandler($event, field.name)"
-                    :value="payload[field.name]"
-                />
-
-                <select
-                    class="select select-bordered w-full max-w-xs"
-                    v-else-if="field.kind === 'enum'"
-                    @change="selectHandler($event, field.name)"
-                    :value="payload[field.name]"
-                >
-                    <option
-                        v-for="option in field.enumMap.values"
-                        :key="option.name"
-                    >
-                        {{ option.name }}
-                    </option>
-                </select>
-                <input
-                    v-else
-                    type="text"
-                    placeholder="Type here"
-                    class="input input-bordered w-full max-w-xs"
-                    v-model="payload[field.name]"
+                <Input
+                    :field="field"
+                    :isUpload="isUpload(field.name)"
+                    :model="payload[field.name]"
+                    @update:model="
+                        (value) => {
+                            payloadSet(field.name, value)
+                        }
+                    "
+                    :enumValue="store.enums[field.type]"
                 />
             </div>
             <button class="btn mt-3 mr-3" v-on:click="save">save</button>
@@ -62,7 +32,12 @@
 </template>
 <script>
 import { useFieldsStore } from '@/stores/fields'
+import Input from '@/components/Input.vue'
+const TYPE = 'create'
 export default {
+    components: {
+        Input,
+    },
     inject: ['Toast'],
     props: ['id'],
     data() {
@@ -77,14 +52,16 @@ export default {
             store,
         }
     },
+    computed: {
+        fields() {
+            return this.store.filedsByType[TYPE]
+        },
+    },
     created() {
         this.init()
     },
 
     methods: {
-        fileHandler(e, key) {
-            this.payload[key] = e.target.files[0]
-        },
         isUpload(fieldName) {
             const bool = this.store.config?.property[fieldName]?.upload
             if (bool && !this.hasUpload) {
@@ -93,7 +70,7 @@ export default {
             return bool
         },
         validate() {
-            return this.store.filterFields.filter((i) => {
+            return this.store.fields.filter((i) => {
                 const value = this.payload[i.name]
                 return i.isRequired && !value
             })
@@ -112,11 +89,8 @@ export default {
             this.init()
             await this.store.list()
         },
-        selectHandler(e, key) {
-            this.payload[key] = e.target.value
-        },
         init() {
-            this.payload = this.store.filterFields.reduce((prev, acc) => {
+            this.payload = this.store.fields.reduce((prev, acc) => {
                 // default value
                 if (acc.hasDefaultValue) {
                     prev[acc.name] =
@@ -140,6 +114,9 @@ export default {
         reset() {
             this.init()
             this.resetFiles()
+        },
+        payloadSet(key, value) {
+            this.payload[key] = value
         },
     },
 }

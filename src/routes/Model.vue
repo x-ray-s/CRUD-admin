@@ -4,6 +4,9 @@ import Date from '../Fields/Date.vue'
 import Page from '@/components/Page.vue'
 import Enter from '@/components/Icons/Enter.vue'
 import { useFieldsStore } from '@/stores/fields'
+
+const TYPE = 'list'
+
 export default {
     components: { List, Date, Page, Enter },
     data() {
@@ -23,6 +26,9 @@ export default {
         checkedAll() {
             return this.checkList.length === this.store.items.length
         },
+        fields() {
+            return this.store.filedsByType[TYPE]
+        },
     },
     setup() {
         const store = useFieldsStore()
@@ -37,7 +43,8 @@ export default {
             this.checkList = []
         },
         'store.field'(v) {
-            this.store.headers()
+            this.store.headersReset()
+            this.store.headers(TYPE)
             this.store.list()
         },
     },
@@ -72,6 +79,7 @@ export default {
             <label
                 for="create-drawer"
                 class="drawer-button btn btn-primary mr-3"
+                @click="store.headers('create')"
                 >Create</label
             >
 
@@ -95,7 +103,7 @@ export default {
                         @change="checkAll"
                     />
                 </th>
-                <th v-for="field in store.fields" :key="field.name">
+                <th v-for="field in fields" :key="field.name">
                     {{ field.alias || field.name }}
                 </th>
                 <th>Actions</th>
@@ -110,7 +118,7 @@ export default {
                             @change="check(item.id)"
                         />
                     </td>
-                    <td v-for="field in store.fields" :key="field.name">
+                    <td v-for="field in fields" :key="field.name">
                         <div v-if="field.isList">
                             <List
                                 :list="item[field.name]"

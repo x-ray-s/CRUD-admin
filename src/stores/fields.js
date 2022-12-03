@@ -11,12 +11,15 @@ export const useFieldsStore = defineStore('list', {
         queue: [],
         field: '',
         config: {},
-    }),
-    getters: {
-        filterFields(state) {
-            return state.fields.filter((i) => !i.isId)
+        enums: {},
+        filedsByType: {
+            create: [],
+            list: [],
+            read: [],
+            update: [],
         },
-    },
+    }),
+
     actions: {
         async list() {
             if (!this.field) {
@@ -48,14 +51,24 @@ export const useFieldsStore = defineStore('list', {
 
             this.items = this.items.filter((i) => i.id !== id)
         },
-        async headers() {
+        async headers(type) {
             if (!this.field) {
                 return
             }
-            const { fields, config } = await fetch(
-                `http://localhost:4000/admin/${this.field}`
+            if (this.filedsByType[type].length) {
+                return
+            }
+            const { fields, enums, config } = await fetch(
+                `http://localhost:4000/admin/${this.field}`,
+                {
+                    params: {
+                        type,
+                    },
+                }
             )
             this.fields = fields
+            this.filedsByType[type] = fields
+            this.enums = enums
             this.config = config
         },
         async create(payload, isMultipart = false) {
@@ -88,6 +101,14 @@ export const useFieldsStore = defineStore('list', {
             )
 
             this.queue = []
+        },
+        headersReset() {
+            this.filedsByType = {
+                create: [],
+                list: [],
+                read: [],
+                update: [],
+            }
         },
     },
 })

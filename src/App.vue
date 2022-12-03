@@ -31,6 +31,6 @@ import CreateDrawer from '@/components/CreateDrawer.vue'
 import Side from '@/components/Side.vue'
 import Toast from '@/components/Toast.vue'
 export default {
-    components: { DeleteConfirm, CreateDrawer, Side, Toast },
+    components: { Toast, DeleteConfirm, CreateDrawer, Side },
 }
 </script>

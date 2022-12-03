@@ -11,6 +11,8 @@ const app = createApp(App)
 
 app.use(pinia)
 app.use(router)
-app.mount('#app')
+
 const Toast = useToastStore()
 app.provide('Toast', Toast)
+
+app.mount('#app')
