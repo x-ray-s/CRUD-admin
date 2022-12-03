@@ -10,13 +10,10 @@ export const useFieldsStore = defineStore('list', {
         fields: [],
         queue: [],
         field: '',
-        config: {},
         enums: {},
         filedsByType: {
             create: [],
             list: [],
-            read: [],
-            update: [],
         },
     }),
 
@@ -25,9 +22,7 @@ export const useFieldsStore = defineStore('list', {
             if (!this.field) {
                 return
             }
-            const { data, page } = await fetch(
-                `http://localhost:4000/admin/${this.field}_list`
-            )
+            const { data, page } = await fetch(`/admin/${this.field}_list`)
             this.items = data
             this.page.total = page
         },
@@ -36,9 +31,7 @@ export const useFieldsStore = defineStore('list', {
                 return
             }
             this.page.current = v
-            const { list } = await fetch(
-                `http://localhost:4000/admin/${this.field}_list?page=${v}`
-            )
+            const { list } = await fetch(`/admin/${this.field}_list?page=${v}`)
             this.items = list
         },
         async remove(id) {
@@ -58,18 +51,14 @@ export const useFieldsStore = defineStore('list', {
             if (this.filedsByType[type].length) {
                 return
             }
-            const { fields, enums, config } = await fetch(
-                `http://localhost:4000/admin/${this.field}`,
-                {
-                    params: {
-                        type,
-                    },
-                }
-            )
+            const { fields, enums } = await fetch(`/admin/${this.field}`, {
+                params: {
+                    type,
+                },
+            })
             this.fields = fields
             this.filedsByType[type] = fields
             this.enums = enums
-            this.config = config
         },
         async create(payload) {
             if (!this.field) {

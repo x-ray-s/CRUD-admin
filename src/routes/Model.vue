@@ -3,12 +3,13 @@ import List from '../Fields/List.vue'
 import Date from '../Fields/Date.vue'
 import Page from '@/components/Page.vue'
 import Enter from '@/components/Icons/Enter.vue'
+import View from '@/components/View.vue'
 import { useFieldsStore } from '@/stores/fields'
 
 const TYPE = 'list'
 
 export default {
-    components: { List, Date, Page, Enter },
+    components: { List, Date, Page, Enter, View },
     data() {
         return {
             checkList: [],
@@ -128,6 +129,10 @@ export default {
                         <div v-else-if="field.type === 'DateTime'">
                             <Date :value="item[field.name]"></Date>
                         </div>
+                        <View
+                            :value="item[field.name]"
+                            v-else-if="field.component === 'upload'"
+                        ></View>
                         <div v-else>{{ item[field.name] }}</div>
                     </td>
                     <td>
