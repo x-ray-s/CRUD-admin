@@ -15,11 +15,10 @@
                 </label>
                 <Input
                     :field="field"
-                    :isUpload="isUpload(field.name)"
                     :model="payload[field.name]"
                     @update:model="
                         (value) => {
-                            payloadSet(field.name, value)
+                            payload[field.name] = value
                         }
                     "
                     :enumValue="store.enums[field.type]"
@@ -43,7 +42,6 @@ export default {
     data() {
         return {
             payload: {},
-            hasUpload: false,
         }
     },
     setup() {
@@ -57,20 +55,13 @@ export default {
             return this.store.filedsByType[TYPE]
         },
     },
-    created() {
+    async created() {
         this.init()
     },
 
     methods: {
-        isUpload(fieldName) {
-            const bool = this.store.config?.property[fieldName]?.upload
-            if (bool && !this.hasUpload) {
-                this.hasUpload = true
-            }
-            return bool
-        },
         validate() {
-            return this.store.fields.filter((i) => {
+            return this.fields.filter((i) => {
                 const value = this.payload[i.name]
                 return i.isRequired && !value
             })
@@ -84,13 +75,13 @@ export default {
                 return
             }
 
-            await this.store.create(this.payload, this.hasUpload)
+            await this.store.create(this.payload)
             document.querySelector(`#${this.id}`).checked = false
             this.init()
             await this.store.list()
         },
         init() {
-            this.payload = this.store.fields.reduce((prev, acc) => {
+            this.payload = this.fields.reduce((prev, acc) => {
                 // default value
                 if (acc.hasDefaultValue) {
                     prev[acc.name] =
@@ -103,7 +94,7 @@ export default {
                 return prev
             }, {})
         },
-        resetFiles() {
+        resetFileInputs() {
             const inputs = this.$el.querySelectorAll('input[type=file]')
             if (inputs) {
                 Array.from(inputs).forEach((el) => {
@@ -113,10 +104,7 @@ export default {
         },
         reset() {
             this.init()
-            this.resetFiles()
-        },
-        payloadSet(key, value) {
-            this.payload[key] = value
+            this.resetFileInputs()
         },
     },
 }

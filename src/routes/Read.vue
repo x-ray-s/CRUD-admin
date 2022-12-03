@@ -1,7 +1,10 @@
 <template>
     <div class="w-1/2 m-auto">
         <div class="flex justify-end">
-            <button class="btn">Edit</button>
+            <button class="btn mr-3" v-if="isEdit" @click="save">save</button>
+            <button class="btn" @click="toggle">
+                {{ isEdit ? 'cancel' : 'edit' }}
+            </button>
         </div>
         <div
             class="form-control w-full"
@@ -10,23 +13,67 @@
         >
             <label class="label">
                 <span class="label-text w-1/3">{{ key }}</span>
-                <div class="w-full truncate">{{ value }}</div>
+                <Input
+                    v-if="isEdit && fieldsMap[key]"
+                    :field="fieldsMap[key]"
+                    :model="store.data[key]"
+                    :enumValue="store.enums[fieldsMap[key].type]"
+                    @update:model="
+                        (value) => {
+                            store.data[key] = value
+                        }
+                    "
+                />
+                <div v-else class="w-full truncate">{{ value }}</div>
             </label>
         </div>
     </div>
 </template>
 <script>
 import { useFieldStore } from '@/stores/field'
+import Input from '@/components/Input.vue'
+const TYPE = 'update'
+let cache = {}
 export default {
+    components: {
+        Input,
+    },
+    data() {
+        return {
+            isEdit: false,
+        }
+    },
     setup() {
         const store = useFieldStore()
         return {
             store,
         }
     },
-    created() {
+    computed: {
+        fieldsMap() {
+            return this.store.fieldsMap(TYPE)
+        },
+    },
+    async created() {
         const { model, id } = this.$route.params
-        this.store.getModel(model, id)
+        this.store.model = model
+        this.store.id = id
+        await this.store.view()
+        await this.store.headers(TYPE)
+    },
+    methods: {
+        async save() {
+            await this.store.update()
+            this.isEdit = false
+        },
+        toggle() {
+            this.isEdit = !this.isEdit
+            if (!this.isEdit) {
+                this.store.data = cache
+            } else {
+                cache = JSON.parse(JSON.stringify(this.store.data))
+            }
+        },
     },
 }
 </script>

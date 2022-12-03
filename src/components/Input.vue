@@ -1,6 +1,6 @@
 <template>
     <input
-        v-if="isUpload"
+        v-if="field.component === 'upload'"
         type="file"
         class="file-input file-input-bordered w-full max-w-xs"
         @change="$emit('update:model', $event.target.files[0])"
@@ -40,7 +40,7 @@
 </template>
 <script>
 export default {
-    props: ['field', 'isUpload', 'model', 'enumValue'],
+    props: ['field', 'model', 'enumValue'],
     emits: ['update:model'],
 
     computed: {

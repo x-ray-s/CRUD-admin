@@ -25,10 +25,10 @@ export const useFieldsStore = defineStore('list', {
             if (!this.field) {
                 return
             }
-            const { list, page } = await fetch(
+            const { data, page } = await fetch(
                 `http://localhost:4000/admin/${this.field}_list`
             )
-            this.items = list
+            this.items = data
             this.page.total = page
         },
         async pagination(v) {
@@ -71,24 +71,30 @@ export const useFieldsStore = defineStore('list', {
             this.enums = enums
             this.config = config
         },
-        async create(payload, isMultipart = false) {
+        async create(payload) {
             if (!this.field) {
                 return
             }
-            const url = `/admin/${this.field}`
-            const request = {
-                method: 'POST',
-                data: payload,
-                headers: {
-                    'content-type': 'application/json',
-                },
+            const hasFile = Object.values(payload).some((v) => {
+                return v instanceof File
+            })
+            if (hasFile) {
+                await fetch(`/admin/${this.field}/upload`, {
+                    method: 'POST',
+                    data: payload,
+                    headers: {
+                        'content-type': 'multipart/form-data',
+                    },
+                })
+            } else {
+                await fetch(`/admin/${this.field}`, {
+                    method: 'POST',
+                    data: payload,
+                    headers: {
+                        'content-type': 'application/json',
+                    },
+                })
             }
-            if (isMultipart) {
-                request.headers = {
-                    'content-type': 'multipart/form-data',
-                }
-            }
-            await fetch(url, request)
         },
         lineUp(items) {
             this.queue = [...this.queue, ...items]
