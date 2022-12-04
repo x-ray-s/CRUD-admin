@@ -1,15 +1,21 @@
 <template>
     <div class="drawer-side">
         <label :for="id" class="drawer-overlay"></label>
-        <div class="p-4 overflow-y-auto w-80 bg-base-100 text-base-content">
+        <div class="p-4 overflow-y-auto w-1/4 bg-base-100 text-base-content">
             <div
-                class="form-control w-full max-w-xs"
+                class="form-control w-full"
                 v-for="field in fields"
                 :key="field.name"
             >
                 <label class="label">
                     <span class="label-text">{{ field.name }}</span>
-                    <span class="label-text text-error" v-if="field.isRequired"
+                    <span
+                        class="label-text text-error"
+                        v-if="
+                            field.isRequired &&
+                            !field.hasDefaultValue &&
+                            !field.isUpdatedAt
+                        "
                         >*</span
                     >
                 </label>
@@ -32,10 +38,12 @@
 <script>
 import { useFieldsStore } from '@/stores/fields'
 import Input from '@/components/Input.vue'
+import Date from '@/components/Date.vue'
 const TYPE = 'create'
 export default {
     components: {
         Input,
+        Date,
     },
     inject: ['Toast'],
     props: ['id'],
@@ -46,6 +54,7 @@ export default {
     },
     setup() {
         const store = useFieldsStore()
+
         return {
             store,
         }
@@ -63,7 +72,12 @@ export default {
         validate() {
             return this.fields.filter((i) => {
                 const value = this.payload[i.name]
-                return i.isRequired && !value
+                return (
+                    i.isRequired &&
+                    !i.hasDefaultValue &&
+                    !i.isUpdatedAt &&
+                    !value
+                )
             })
         },
         async save() {
@@ -74,6 +88,15 @@ export default {
                 )
                 return
             }
+
+            const clone = Object.assign(this.payload)
+
+            Object.keys(this.payload).forEach((key) => {
+                const field = this.fields.find((i) => i.name === key)
+                if (field && field.component === 'quill') {
+                    clone[key] = JSON.stringify(this.payload[key])
+                }
+            })
 
             await this.store.create(this.payload)
             document.querySelector(`#${this.id}`).checked = false

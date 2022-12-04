@@ -44,6 +44,5 @@ export const useFieldStore = defineStore('model', {
                 return prev
             }, {})
         },
-        create() {},
     },
 })

@@ -24,6 +24,10 @@
                         }
                     "
                 />
+                <View
+                    v-else-if="fieldsMap[key]?.component === 'upload'"
+                    :value="value"
+                ></View>
                 <div v-else class="w-full truncate">{{ value }}</div>
             </label>
         </div>
@@ -32,11 +36,13 @@
 <script>
 import { useFieldStore } from '@/stores/field'
 import Input from '@/components/Input.vue'
+import View from '@/components/View.vue'
 const TYPE = 'update'
 let cache = {}
 export default {
     components: {
         Input,
+        View,
     },
     data() {
         return {
@@ -58,8 +64,8 @@ export default {
         const { model, id } = this.$route.params
         this.store.model = model
         this.store.id = id
-        await this.store.view()
         await this.store.headers(TYPE)
+        await this.store.view()
     },
     methods: {
         async save() {

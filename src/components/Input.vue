@@ -2,9 +2,12 @@
     <input
         v-if="field.component === 'upload'"
         type="file"
-        class="file-input file-input-bordered w-full max-w-xs"
+        class="file-input file-input-bordered w-full"
         @change="$emit('update:model', $event.target.files[0])"
     />
+    <div class="h-52 mb-10" v-else-if="field.component === 'quill'">
+        <QuillEditor v-model:content="detla" theme="snow" />
+    </div>
     <input
         v-else-if="field.type === 'Boolean'"
         type="checkbox"
@@ -15,13 +18,13 @@
         v-else-if="field.type === 'DateTime'"
         type="datetime-local"
         step="1"
-        class="input input-bordered w-full max-w-xs"
+        class="input input-bordered w-full"
         @:change="$emit('update:model', $event.target.value)"
         :value="value"
     />
 
     <select
-        class="select select-bordered w-full max-w-xs"
+        class="select select-bordered w-full"
         v-else-if="field.kind === 'enum'"
         @:change="$emit('update:model', $event.target.value)"
         :value="value"
@@ -34,7 +37,7 @@
         v-else
         type="text"
         placeholder="Type here"
-        class="input input-bordered w-full max-w-xs"
+        class="input input-bordered w-full"
         v-model="value"
     />
 </template>
@@ -50,6 +53,14 @@ export default {
             },
             set(value) {
                 this.$emit('update:model', value)
+            },
+        },
+        detla: {
+            get() {
+                return JSON.parse(this.model)
+            },
+            set(value) {
+                this.$emit('update:model', JSON.stringify(value))
             },
         },
     },

@@ -25,7 +25,10 @@ export default {
     },
     computed: {
         checkedAll() {
-            return this.checkList.length === this.store.items.length
+            return (
+                this.store.items.length !== 0 &&
+                this.checkList.length === this.store.items.length
+            )
         },
         fields() {
             return this.store.filedsByType[TYPE]
