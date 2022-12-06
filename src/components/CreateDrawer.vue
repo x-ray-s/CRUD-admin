@@ -4,7 +4,7 @@
         <div class="p-4 overflow-y-auto w-1/4 bg-base-100 text-base-content">
             <div
                 class="form-control w-full"
-                v-for="field in fields"
+                v-for="field in store.fields"
                 :key="field.name"
             >
                 <label class="label">
@@ -21,10 +21,10 @@
                 </label>
                 <Input
                     :field="field"
-                    :model="payload[field.name]"
+                    :model="store.payload[field.name]"
                     @update:model="
                         (value) => {
-                            payload[field.name] = value
+                            store.payload[field.name] = value
                         }
                     "
                     :enumValue="store.enums[field.type]"
@@ -36,10 +36,11 @@
     </div>
 </template>
 <script>
+import { useCreateStore } from '@/stores/create'
 import { useFieldsStore } from '@/stores/fields'
 import Input from '@/components/Input.vue'
 import Date from '@/components/Date.vue'
-const TYPE = 'create'
+
 export default {
     components: {
         Input,
@@ -47,75 +48,35 @@ export default {
     },
     inject: ['Toast'],
     props: ['id'],
-    data() {
-        return {
-            payload: {},
-        }
-    },
+
     setup() {
-        const store = useFieldsStore()
+        const store = useCreateStore()
+        const fieldsStore = useFieldsStore()
 
         return {
             store,
+            fieldsStore,
         }
     },
-    computed: {
-        fields() {
-            return this.store.filedsByType[TYPE]
+    watch: {
+        'store.model'(v) {
+            this.store.headers()
         },
     },
-    async created() {
-        this.init()
-    },
-
     methods: {
-        validate() {
-            return this.fields.filter((i) => {
-                const value = this.payload[i.name]
-                return (
-                    i.isRequired &&
-                    !i.hasDefaultValue &&
-                    !i.isUpdatedAt &&
-                    !value
-                )
-            })
-        },
         async save() {
             // required field
-            if (this.validate().length) {
+            if (this.store.validate().length) {
                 this.Toast.show(
-                    'The ' + this.validate()[0].name + ' is required'
+                    'The ' + this.store.validate()[0].name + ' is required'
                 )
                 return
             }
 
-            const clone = Object.assign(this.payload)
-
-            Object.keys(this.payload).forEach((key) => {
-                const field = this.fields.find((i) => i.name === key)
-                if (field && field.component === 'quill') {
-                    clone[key] = JSON.stringify(this.payload[key])
-                }
-            })
-
             await this.store.create(this.payload)
             document.querySelector(`#${this.id}`).checked = false
-            this.init()
-            await this.store.list()
-        },
-        init() {
-            this.payload = this.fields.reduce((prev, acc) => {
-                // default value
-                if (acc.hasDefaultValue) {
-                    prev[acc.name] =
-                        acc.default.name === 'now'
-                            ? new Date().toISOString().replace(/\.\d{3}z/gi, '')
-                            : ''
-                } else {
-                    prev[acc.name] = ''
-                }
-                return prev
-            }, {})
+            await this.fieldsStore.list()
+            this.reset()
         },
         resetFileInputs() {
             const inputs = this.$el.querySelectorAll('input[type=file]')
@@ -126,7 +87,7 @@ export default {
             }
         },
         reset() {
-            this.init()
+            this.store.payload = this.store.init()
             this.resetFileInputs()
         },
     },

@@ -18,6 +18,7 @@ specifiers:
   postcss: ^8.4.7
   prettier: ^2.7.1
   tailwindcss: ^3.0.23
+  vanilla-jsoneditor: ^0.10.2
   vite: ^2.8.6
   vue: ^3.2.31
   vue-router: '4'
@@ -27,6 +28,7 @@ dependencies:
   '@vueuse/core': 9.6.0_vue@3.2.40
   date-fns: 2.29.3
   pinia: 2.0.22_vue@3.2.40
+  vanilla-jsoneditor: 0.10.2
   vue: 3.2.40
   vue-router: 4.1.5_vue@3.2.40
 
@@ -2177,6 +2179,10 @@ packages:
   /util-deprecate/1.0.2:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
     dev: true
+
+  /vanilla-jsoneditor/0.10.2:
+    resolution: {integrity: sha512-9/9kBA2DKbVh6zUwxOUkcJs65tz04OVlgAQetU62lbL9ZJwdCSS9YquQ3dkz/60apHEfu8yQj7savFj5zTh2Yw==}
+    dev: false
 
   /vite/2.9.15:
     resolution: {integrity: sha512-fzMt2jK4vQ3yK56te3Kqpkaeq9DkcZfBbzHwYpobasvgYmP2SoAr6Aic05CsB4CzCZbsDv4sujX3pkEGhLabVQ==}

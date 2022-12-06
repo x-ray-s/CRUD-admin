@@ -10,8 +10,26 @@ export const useFieldStore = defineStore('model', {
         },
         id: '',
         model: '',
+        payload: {},
     }),
     actions: {
+        init() {
+            this.payload = this.filedsByType.update.reduce((prev, acc) => {
+                const name = acc.name
+                const value = this.data[name]
+                if (acc.type === 'DateTime') {
+                    prev[name] = new Date(value).valueOf()
+                }
+                if (acc.type === 'Json') {
+                    prev[name] = {
+                        json: value,
+                    }
+                } else {
+                    prev[name] = value
+                }
+                return prev
+            }, {})
+        },
         async view() {
             const data = await fetch(`/admin/${this.model}/${this.id}`)
             this.data = data
@@ -19,30 +37,17 @@ export const useFieldStore = defineStore('model', {
         async update() {
             await fetch(`/admin/${this.model}/${this.id}`, {
                 method: 'PATCH',
-                data: this.data,
+                data: this.payload,
             })
         },
         async headers(type) {
-            if (this.filedsByType[type].length) {
-                return
-            }
             const { fields, enums } = await fetch(`/admin/${this.model}`, {
                 params: {
                     type,
                 },
             })
-            this.fields = fields.reduce((prev, acc) => {
-                prev[acc.name] = acc
-                return prev
-            }, {})
             this.filedsByType[type] = fields
             this.enums = enums
-        },
-        fieldsMap(type) {
-            return this.filedsByType[type].reduce((prev, acc) => {
-                prev[acc.name] = acc
-                return prev
-            }, {})
         },
     },
 })

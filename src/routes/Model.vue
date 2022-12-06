@@ -5,6 +5,7 @@ import Page from '@/components/Page.vue'
 import Enter from '@/components/Icons/Enter.vue'
 import View from '@/components/View.vue'
 import { useFieldsStore } from '@/stores/fields'
+import { useCreateStore } from '@/stores/create'
 
 const TYPE = 'list'
 
@@ -36,9 +37,11 @@ export default {
     },
     setup() {
         const store = useFieldsStore()
+        const createStore = useCreateStore()
 
         return {
             store,
+            createStore,
         }
     },
     watch: {
@@ -83,7 +86,7 @@ export default {
             <label
                 for="create-drawer"
                 class="drawer-button btn btn-primary mr-3"
-                @click="store.headers('create')"
+                @click="createStore.model = store.field"
                 >Create</label
             >
 
@@ -103,7 +106,7 @@ export default {
                     <input
                         type="checkbox"
                         class="checkbox align-middle"
-                        :checked="checkList.length === store.items.length"
+                        :checked="checkedAll"
                         @change="checkAll"
                     />
                 </th>

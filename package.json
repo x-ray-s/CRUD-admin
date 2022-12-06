@@ -11,6 +11,7 @@
     "@vueuse/core": "^9.6.0",
     "date-fns": "^2.29.3",
     "pinia": "^2.0.22",
+    "vanilla-jsoneditor": "^0.10.2",
     "vue": "^3.2.31",
     "vue-router": "4"
   },
