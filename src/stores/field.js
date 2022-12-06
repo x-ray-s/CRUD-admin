@@ -19,11 +19,6 @@ export const useFieldStore = defineStore('model', {
                 const value = this.data[name]
                 if (acc.type === 'DateTime') {
                     prev[name] = new Date(value).valueOf()
-                }
-                if (acc.type === 'Json') {
-                    prev[name] = {
-                        json: value,
-                    }
                 } else {
                     prev[name] = value
                 }
@@ -38,7 +33,11 @@ export const useFieldStore = defineStore('model', {
             await fetch(`/admin/${this.model}/${this.id}`, {
                 method: 'PATCH',
                 data: this.payload,
+                headers: {
+                    'content-type': 'application/json',
+                },
             })
+            this.data = this.payload
         },
         async headers(type) {
             const { fields, enums } = await fetch(`/admin/${this.model}`, {

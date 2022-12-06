@@ -5,14 +5,14 @@
             class="file-input file-input-bordered w-full"
             @change="$emit('update:model', $event.target.files[0])"
         />
-        <Preview :file="value"></Preview>
+        <Preview :file="value" v-if="value"></Preview>
     </div>
 
     <div class="h-52 mb-10" v-else-if="field.component === 'quill'">
         <QuillEditor v-model:content="value" theme="snow" />
     </div>
     <div class="flex h-52 w-full" v-else-if="field.type === 'Json'">
-        <VueJSONEditor mode="text" :content="value" :onChange="quillChange" />
+        <VueJSONEditor :content="value" :onChange="onChange" />
     </div>
     <input
         v-else-if="field.type === 'Boolean'"
@@ -63,15 +63,15 @@ export default {
             get() {
                 if (this.field.component === 'quill') {
                     return JSON.parse(this.model)
-                } else if (this.field.type === 'Json') {
-                    return {
-                        json: this.model,
-                    }
                 } else if (this.field.type === 'DateTime') {
                     return format(
                         this.model ? new Date(this.model) : new Date(),
                         "yyyy-MM-dd'T'HH:mm:ss"
                     )
+                } else if (this.field.type === 'Json') {
+                    return {
+                        json: this.model,
+                    }
                 } else {
                     return this.model
                 }
@@ -81,18 +81,23 @@ export default {
                 if (this.field.component === 'quill') {
                     v = JSON.stringify(value)
                 } else if (this.field.type === 'DateTime') {
-                    console.log(v)
                     v = new Date(value).valueOf()
                 }
                 this.$emit('update:model', v)
             },
         },
     },
+
     methods: {
-        quillChange(v) {
-            try {
-                this.$emit('update:model', JSON.parse(v.text))
-            } catch (e) {}
+        onChange: function (content) {
+            const { text, json } = content
+            if (text) {
+                try {
+                    this.$emit('update:model', JSON.parse(text))
+                } catch (e) {}
+            } else {
+                this.$emit('update:model', json)
+            }
         },
     },
 }

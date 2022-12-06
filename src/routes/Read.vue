@@ -11,7 +11,19 @@
             v-for="(value, key) in store.data"
             :key="key"
         >
-            <label class="label">
+            <label
+                class="label"
+                @click="
+                    (e) => {
+                        if (
+                            updateFields[key].type === 'Json' ||
+                            updateFields[key].component === 'quill'
+                        ) {
+                            e.preventDefault()
+                        }
+                    }
+                "
+            >
                 <span class="label-text w-1/3">{{ key }}</span>
                 <Input
                     v-if="isEdit && updateFields[key]"
@@ -83,6 +95,7 @@ export default {
         async save() {
             await this.store.update()
             this.isEdit = false
+            this.store.view()
         },
         async toggle() {
             if (!this.isEdit) {

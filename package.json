@@ -10,8 +10,9 @@
     "@vueup/vue-quill": "^1.0.0",
     "@vueuse/core": "^9.6.0",
     "date-fns": "^2.29.3",
+    "json-editor-vue": "^0.10.0",
     "pinia": "^2.0.22",
-    "vanilla-jsoneditor": "^0.10.2",
+    "vanilla-jsoneditor": "0.5.0",
     "vue": "^3.2.31",
     "vue-router": "4"
   },
