@@ -1,12 +1,15 @@
 import './utils/fetch'
-import { createApp } from 'vue'
+import './app.css'
+import '@vueup/vue-quill/dist/vue-quill.snow.css'
+
+import { QuillEditor } from '@vueup/vue-quill'
 import { createPinia } from 'pinia'
+import { createApp } from 'vue'
+
+import { useToastStore } from '@/stores/toast'
+
 import App from './App.vue'
 import { router } from './routes/index'
-import './app.css'
-import { useToastStore } from '@/stores/toast'
-import { QuillEditor } from '@vueup/vue-quill'
-import '@vueup/vue-quill/dist/vue-quill.snow.css'
 const pinia = createPinia()
 const app = createApp(App)
 

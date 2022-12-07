@@ -2,9 +2,23 @@
     "root": true,
     "rules": {
         "simple-import-sort/imports": 1,
-        "simple-import-sort/exports": 1
+        "simple-import-sort/exports": 1,
+        "vue/html-indent": [1, 4],
+        "vue/html-self-closing": [
+            1,
+            {
+                "html": {
+                    "void": "never",
+                    "normal": "always",
+                    "component": "always"
+                },
+                "svg": "always",
+                "math": "always",
+                "input": "always"
+            }
+        ]
     },
-    "extends": ["standard", "prettier"],
+    "extends": ["standard", "prettier", "plugin:vue/vue3-recommended"],
     "plugins": ["simple-import-sort"],
     "parserOptions": {
         "ecmaVersion": 2021,

@@ -1,16 +1,15 @@
 <script>
-import List from '../Fields/List.vue'
-import Date from '../Fields/Date.vue'
 import Page from '@/components/Page.vue'
 import Enter from '@/components/Icons/Enter.vue'
 import View from '@/components/View.vue'
+import Cell from '@/components/List/Cell.vue'
 import { useFieldsStore } from '@/stores/fields'
 import { useCreateStore } from '@/stores/create'
 
 const TYPE = 'list'
 
 export default {
-    components: { List, Date, Page, Enter, View },
+    components: { Page, Enter, View, Cell },
     data() {
         return {
             checkList: [],
@@ -23,6 +22,7 @@ export default {
     beforeRouteUpdate(to, from) {
         const { model } = to.params
         this.store.field = model
+        document.querySelector(`#create-drawer`).checked = false
     },
     computed: {
         checkedAll() {
@@ -126,20 +126,7 @@ export default {
                         />
                     </td>
                     <td v-for="field in fields" :key="field.name">
-                        <div v-if="field.isList">
-                            <List
-                                :list="item[field.name]"
-                                :field="field"
-                            ></List>
-                        </div>
-                        <div v-else-if="field.type === 'DateTime'">
-                            <Date :value="item[field.name]"></Date>
-                        </div>
-                        <View
-                            :value="item[field.name]"
-                            v-else-if="field.component === 'upload'"
-                        ></View>
-                        <div v-else>{{ item[field.name] }}</div>
+                        <Cell :field="field" :value="item[field.name]" />
                     </td>
                     <td>
                         <router-link

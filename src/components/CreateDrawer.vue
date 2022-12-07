@@ -19,15 +19,10 @@
                         >*</span
                     >
                 </label>
-                <Input
+                <InputByField
                     :field="field"
-                    :model="store.payload[field.name]"
-                    @update:model="
-                        (value) => {
-                            store.payload[field.name] = value
-                        }
-                    "
-                    :enumValue="store.enums[field.type]"
+                    v-model="store.payload[field.name]"
+                    :enums="store.enums[field.type]"
                 />
             </div>
             <button class="btn mt-3 mr-3" v-on:click="save">save</button>
@@ -38,13 +33,13 @@
 <script>
 import { useCreateStore } from '@/stores/create'
 import { useFieldsStore } from '@/stores/fields'
-import Input from '@/components/Input.vue'
 import Date from '@/components/Date.vue'
+import InputByField from '@/components/Fields/index.vue'
 
 export default {
     components: {
-        Input,
         Date,
+        InputByField,
     },
     inject: ['Toast'],
     props: ['id'],

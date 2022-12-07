@@ -16,8 +16,10 @@
                 @click="
                     (e) => {
                         if (
-                            updateFields[key].type === 'Json' ||
-                            updateFields[key].component === 'quill'
+                            updateFields[key] &&
+                            (updateFields[key].type === 'Json' ||
+                                updateFields[key].component ||
+                                updateFields[key].kind === 'enum')
                         ) {
                             e.preventDefault()
                         }
@@ -25,16 +27,11 @@
                 "
             >
                 <span class="label-text w-1/3">{{ key }}</span>
-                <Input
+                <InputByField
                     v-if="isEdit && updateFields[key]"
                     :field="updateFields[key]"
-                    :model="store.payload[key]"
-                    :enumValue="store.enums[updateFields[key].type]"
-                    @update:model="
-                        (value) => {
-                            store.payload[key] = value
-                        }
-                    "
+                    v-model="store.payload[key]"
+                    :enums="store.enums[updateFields[key].type]"
                 />
                 <View
                     v-else
@@ -48,12 +45,12 @@
 </template>
 <script>
 import { useFieldStore } from '@/stores/field'
-import Input from '@/components/Input.vue'
+import InputByField from '@/components/Fields/index.vue'
 import View from '@/components/View.vue'
 export default {
     components: {
-        Input,
         View,
+        InputByField,
     },
     data() {
         return {
