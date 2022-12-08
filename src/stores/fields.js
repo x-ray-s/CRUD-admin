@@ -11,12 +11,17 @@ export const useFieldsStore = defineStore('list', {
         queue: [],
         field: '',
         enums: {},
-        filedsByType: {
-            create: [],
-            list: [],
-        },
-    }),
 
+        checkList: [],
+    }),
+    getters: {
+        checkedAll() {
+            return (
+                this.items.length !== 0 &&
+                this.checkList.length === this.items.length
+            )
+        },
+    },
     actions: {
         async list() {
             if (!this.field) {
@@ -48,16 +53,12 @@ export const useFieldsStore = defineStore('list', {
             if (!this.field) {
                 return
             }
-            if (this.filedsByType[type].length) {
-                return
-            }
             const { fields, enums } = await fetch(`/admin/${this.field}`, {
                 params: {
                     type,
                 },
             })
             this.fields = fields
-            this.filedsByType[type] = fields
             this.enums = enums
         },
         async create(payload) {
@@ -85,8 +86,8 @@ export const useFieldsStore = defineStore('list', {
                 })
             }
         },
-        lineUp(items) {
-            this.queue = [...this.queue, ...items]
+        lineUp() {
+            this.queue = [...this.queue, ...this.checkList]
         },
         async removeFromQueue() {
             await Promise.all(
@@ -96,6 +97,7 @@ export const useFieldsStore = defineStore('list', {
             )
 
             this.queue = []
+            this.checkList = []
         },
         headersReset() {
             this.filedsByType = {
@@ -103,6 +105,20 @@ export const useFieldsStore = defineStore('list', {
                 list: [],
                 read: [],
                 update: [],
+            }
+        },
+        checkAll() {
+            if (this.checkedAll) {
+                this.checkList = []
+            } else {
+                this.checkList = this.items.map((i) => i.id)
+            }
+        },
+        check(id) {
+            if (this.checkList.includes(id)) {
+                this.checkList = this.checkList.filter((i) => i !== id)
+            } else {
+                this.checkList.push(id)
             }
         },
     },

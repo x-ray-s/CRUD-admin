@@ -24,22 +24,8 @@ export default {
             createStore,
         }
     },
-    data() {
-        return {
-            checkList: [],
-        }
-    },
-    computed: {
-        checkedAll() {
-            return (
-                this.store.items.length !== 0 &&
-                this.checkList.length === this.store.items.length
-            )
-        },
-        fields() {
-            return this.store.filedsByType[TYPE]
-        },
-    },
+
+
     watch: {
         async 'page.current'(v) {
             await this.store.page(v)
@@ -56,22 +42,9 @@ export default {
         this.store.field = model
     },
     methods: {
-        checkAll() {
-            if (this.checkedAll) {
-                this.checkList = []
-            } else {
-                this.checkList = this.store.items.map((i) => i.id)
-            }
-        },
-        check(id) {
-            if (this.checkList.includes(id)) {
-                this.checkList = this.checkList.filter((i) => i !== id)
-            } else {
-                this.checkList.push(id)
-            }
-        },
+
         confirmDelete() {
-            this.store.lineUp(this.checkList)
+            this.store.lineUp()
         },
         pageHandler(v) {
             this.store.pagination(v)
@@ -95,7 +68,7 @@ export default {
             >filter</label>
 
             <label
-                v-if="checkList.length > 0"
+                v-if="store.checkList.length > 0"
                 for="delete-modal"
                 class="btn"
                 @click="confirmDelete"
@@ -107,12 +80,12 @@ export default {
                     <input
                         type="checkbox"
                         class="checkbox align-middle"
-                        :checked="checkedAll"
-                        @change="checkAll"
+                        :checked="store.checkedAll"
+                        @change="store.checkAll"
                     >
                 </th>
                 <th
-                    v-for="field in fields"
+                    v-for="field in store.fields"
                     :key="field.name"
                 >
                     {{ field.alias || field.name }}
@@ -129,12 +102,12 @@ export default {
                         <input
                             type="checkbox"
                             class="checkbox"
-                            :checked="checkList.includes(item.id)"
-                            @change="check(item.id)"
+                            :checked="store.checkList.includes(item.id)"
+                            @change="store.check(item.id)"
                         >
                     </td>
                     <td
-                        v-for="field in fields"
+                        v-for="field in store.fields"
                         :key="field.name"
                     >
                         <Cell
