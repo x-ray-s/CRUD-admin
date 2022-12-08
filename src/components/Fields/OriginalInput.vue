@@ -1,5 +1,8 @@
 <template>
-    <input v-bind="attrs" @input="onChange" />
+    <input
+        v-bind="attrs"
+        @input="onChange"
+    >
 </template>
 <script>
 import { format } from 'date-fns'
@@ -13,7 +16,7 @@ export default {
     emits: ['update:modelValue'],
     computed: {
         attrs() {
-            let value = this.$attrs.modelValue
+            const value = this.$attrs.modelValue
             switch (this.type) {
                 case 'Boolean':
                     return {
@@ -35,7 +38,7 @@ export default {
             return {
                 type: 'text',
                 class: 'input input-bordered w-full',
-                value: value,
+                value,
             }
         },
     },

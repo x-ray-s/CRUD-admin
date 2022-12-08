@@ -3,7 +3,9 @@ import { defineStore } from 'pinia'
 const initFields = (fields) => {
     return fields.reduce((prev, acc) => {
         // default value
-        if (acc.type === 'Boolean') {
+        if (acc.isList) {
+            prev[acc.name] = []
+        } else if (acc.type === 'Boolean') {
             prev[acc.name] = false
         } else if (acc.type === 'Json') {
             prev[acc.name] = {}

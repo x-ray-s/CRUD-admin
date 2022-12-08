@@ -1,6 +1,9 @@
 <template>
     <div class="flex h-52 w-full">
-        <VueJSONEditor :content="content" :onChange="onChange" />
+        <VueJSONEditor
+            :content="content"
+            :on-change="onChange"
+        />
     </div>
 </template>
 <script>

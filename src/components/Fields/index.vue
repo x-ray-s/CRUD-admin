@@ -1,25 +1,24 @@
 <template>
-    <component
-        :is="component"
-        :type="field.type"
-        v-bind="$attrs"
+    <ArrayField
+        v-if="field.isList"
+        v-model="$attrs.modelValue"
+        :field="field"
+    />
+    <Single
+        v-else
+        :field="field"
         :enums="enums"
     />
 </template>
 
 <script>
-import EnumSelect from './EnumSelect.vue'
-import JsonEditor from './JsonEditor.vue'
-import Original from './OriginalInput.vue'
-import Quill from './Quill.vue'
-import Upload from './Upload.vue'
+import ArrayField from './Array.vue'
+import Single from './Single.vue'
+
 export default {
     components: {
-        Upload,
-        Original,
-        EnumSelect,
-        JsonEditor,
-        Quill,
+        ArrayField,
+        Single
     },
     props: {
         field: {
@@ -31,28 +30,6 @@ export default {
             default() {
                 return []
             },
-        },
-    },
-    computed: {
-        component() {
-            if (this.field.component) {
-                switch (this.field.component) {
-                    case 'upload':
-                        return Upload
-                    case 'quill':
-                        return Quill
-                }
-            } else if (this.field.kind === 'enum') {
-                return EnumSelect
-            } else {
-                switch (this.field.type) {
-                    case 'Json':
-                        return JsonEditor
-                    default:
-                        return Original
-                }
-            }
-            return ''
         },
     },
 }

@@ -1,11 +1,11 @@
 <template>
     <div>
         <img
+            v-if="field.component === 'upload'"
             class="w-20"
             :src="display"
             alt=""
-            v-if="this.field.component === 'upload'"
-        />
+        >
         <div v-else>
             {{ display }}
         </div>
