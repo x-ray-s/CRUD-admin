@@ -22,7 +22,7 @@ export default {
             const { text, json } = content
             if (text) {
                 try {
-                    this.$emit('update:model', JSON.parse(text))
+                    this.$emit('update:modelValue', JSON.parse(text))
                 } catch (e) {}
             } else {
                 this.$emit('update:modelValue', json)

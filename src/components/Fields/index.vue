@@ -8,18 +8,18 @@
 </template>
 
 <script>
-import { QuillEditor } from '@vueup/vue-quill'
-
-import Original from './OriginalInput.vue'
-import Upload from './Upload.vue'
 import EnumSelect from './EnumSelect.vue'
 import JsonEditor from './JsonEditor.vue'
+import Original from './OriginalInput.vue'
+import Quill from './Quill.vue'
+import Upload from './Upload.vue'
 export default {
     components: {
         Upload,
         Original,
         EnumSelect,
         JsonEditor,
+        Quill,
     },
     props: {
         field: {
@@ -28,6 +28,9 @@ export default {
         },
         enums: {
             type: Array,
+            default() {
+                return []
+            },
         },
     },
     computed: {
@@ -37,7 +40,7 @@ export default {
                     case 'upload':
                         return Upload
                     case 'quill':
-                        return QuillEditor
+                        return Quill
                 }
             } else if (this.field.kind === 'enum') {
                 return EnumSelect

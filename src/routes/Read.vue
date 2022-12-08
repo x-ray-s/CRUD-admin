@@ -1,15 +1,24 @@
 <template>
     <div class="w-1/2 m-auto">
         <div class="flex justify-end">
-            <button class="btn mr-3" v-if="isEdit" @click="save">save</button>
-            <button class="btn" @click="toggle">
+            <button
+                v-if="isEdit"
+                class="btn mr-3"
+                @click="save"
+            >
+                save
+            </button>
+            <button
+                class="btn"
+                @click="toggle"
+            >
                 {{ isEdit ? 'cancel' : 'edit' }}
             </button>
         </div>
         <div
-            class="form-control w-full"
             v-for="(value, key) in store.data"
             :key="key"
+            class="form-control w-full"
         >
             <label
                 class="label"
@@ -29,38 +38,38 @@
                 <span class="label-text w-1/3">{{ key }}</span>
                 <InputByField
                     v-if="isEdit && updateFields[key]"
-                    :field="updateFields[key]"
                     v-model="store.payload[key]"
+                    :field="updateFields[key]"
                     :enums="store.enums[updateFields[key].type]"
                 />
-                <View
+                <ViewBox
                     v-else
                     :component="readFields[key]?.component"
                     :value="value"
                     :type="readFields[key]?.type"
-                ></View>
+                />
             </label>
         </div>
     </div>
 </template>
 <script>
-import { useFieldStore } from '@/stores/field'
 import InputByField from '@/components/Fields/index.vue'
-import View from '@/components/View.vue'
+import ViewBox from '@/components/View.vue'
+import { useFieldStore } from '@/stores/field'
 export default {
     components: {
-        View,
         InputByField,
-    },
-    data() {
-        return {
-            isEdit: false,
-        }
+        ViewBox,
     },
     setup() {
         const store = useFieldStore()
         return {
             store,
+        }
+    },
+    data() {
+        return {
+            isEdit: false,
         }
     },
     computed: {

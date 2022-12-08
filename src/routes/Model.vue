@@ -1,28 +1,33 @@
 <script>
-import Page from '@/components/Page.vue'
 import Enter from '@/components/Icons/Enter.vue'
-import View from '@/components/View.vue'
 import Cell from '@/components/List/Cell.vue'
-import { useFieldsStore } from '@/stores/fields'
+import Page from '@/components/Page.vue'
 import { useCreateStore } from '@/stores/create'
+import { useFieldsStore } from '@/stores/fields'
 
 const TYPE = 'list'
 
 export default {
-    components: { Page, Enter, View, Cell },
-    data() {
-        return {
-            checkList: [],
-        }
-    },
-    mounted() {
-        const { model } = this.$route.params
-        this.store.field = model
-    },
+    components: { Page, Enter, Cell },
     beforeRouteUpdate(to, from) {
         const { model } = to.params
         this.store.field = model
         document.querySelector(`#create-drawer`).checked = false
+    },
+
+    setup() {
+        const store = useFieldsStore()
+        const createStore = useCreateStore()
+
+        return {
+            store,
+            createStore,
+        }
+    },
+    data() {
+        return {
+            checkList: [],
+        }
     },
     computed: {
         checkedAll() {
@@ -35,15 +40,6 @@ export default {
             return this.store.filedsByType[TYPE]
         },
     },
-    setup() {
-        const store = useFieldsStore()
-        const createStore = useCreateStore()
-
-        return {
-            store,
-            createStore,
-        }
-    },
     watch: {
         async 'page.current'(v) {
             await this.store.page(v)
@@ -54,6 +50,10 @@ export default {
             this.store.headers(TYPE)
             this.store.list()
         },
+    },
+    mounted() {
+        const { model } = this.$route.params
+        this.store.field = model
     },
     methods: {
         checkAll() {
@@ -87,18 +87,19 @@ export default {
                 for="create-drawer"
                 class="drawer-button btn btn-primary mr-3"
                 @click="createStore.model = store.field"
-                >Create</label
-            >
-
-            <label for="" class="btn mr-3">filter</label>
+            >Create</label>
 
             <label
+                for=""
+                class="btn mr-3"
+            >filter</label>
+
+            <label
+                v-if="checkList.length > 0"
                 for="delete-modal"
                 class="btn"
                 @click="confirmDelete"
-                v-if="checkList.length > 0"
-                >delete</label
-            >
+            >delete</label>
         </div>
         <table class="table w-full mb-4">
             <thead>
@@ -108,25 +109,38 @@ export default {
                         class="checkbox align-middle"
                         :checked="checkedAll"
                         @change="checkAll"
-                    />
+                    >
                 </th>
-                <th v-for="field in fields" :key="field.name">
+                <th
+                    v-for="field in fields"
+                    :key="field.name"
+                >
                     {{ field.alias || field.name }}
                 </th>
                 <th>Actions</th>
             </thead>
             <tbody>
-                <tr v-for="item in store.items" :key="item.id" :class="'hover'">
+                <tr
+                    v-for="item in store.items"
+                    :key="item.id"
+                    :class="'hover'"
+                >
                     <td>
                         <input
                             type="checkbox"
                             class="checkbox"
                             :checked="checkList.includes(item.id)"
                             @change="check(item.id)"
-                        />
+                        >
                     </td>
-                    <td v-for="field in fields" :key="field.name">
-                        <Cell :field="field" :value="item[field.name]" />
+                    <td
+                        v-for="field in fields"
+                        :key="field.name"
+                    >
+                        <Cell
+                            :field="field"
+                            :value="item[field.name]"
+                        />
                     </td>
                     <td>
                         <router-link
@@ -140,9 +154,9 @@ export default {
             </tbody>
         </table>
         <Page
-            :page="store.page"
-            v-on:change="pageHandler"
             v-if="store.page.total > 1"
+            :page="store.page"
+            @change="pageHandler"
         />
     </div>
 </template>

@@ -31,8 +31,8 @@ export const useFieldsStore = defineStore('list', {
                 return
             }
             this.page.current = v
-            const { list } = await fetch(`/admin/${this.field}_list?page=${v}`)
-            this.items = list
+            const { data } = await fetch(`/admin/${this.field}_list?page=${v}`)
+            this.items = data
         },
         async remove(id) {
             if (!this.field) {

@@ -4,9 +4,16 @@
         class="w-24"
         :src="url"
         alt=""
-    />
-    <div v-else-if="type === 'Json'">{{ value }}</div>
-    <div v-else class="w-full truncate">{{ value }}</div>
+    >
+    <div v-else-if="type === 'Json'">
+        {{ value }}
+    </div>
+    <div
+        v-else
+        class="w-full truncate"
+    >
+        {{ value }}
+    </div>
 </template>
 <script>
 export default {
