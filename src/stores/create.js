@@ -3,6 +3,9 @@ import { defineStore } from 'pinia'
 const initFields = (fields) => {
     return fields.reduce((prev, acc) => {
         // default value
+        if (acc.hasDefaultValue) {
+            return prev
+        }
         if (acc.isList) {
             prev[acc.name] = []
         } else if (acc.type === 'Boolean') {
@@ -11,7 +14,7 @@ const initFields = (fields) => {
             prev[acc.name] = {}
         } else if (acc.type === 'DateTime') {
             prev[acc.name] = Date.now()
-        } else {
+        } else if (acc.type === 'String') {
             prev[acc.name] = ''
         }
         return prev
