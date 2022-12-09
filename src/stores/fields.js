@@ -13,6 +13,7 @@ export const useFieldsStore = defineStore('list', {
         enums: {},
 
         checkList: [],
+        permissions: {},
     }),
     getters: {
         checkedAll() {
@@ -85,6 +86,13 @@ export const useFieldsStore = defineStore('list', {
                     },
                 })
             }
+        },
+        async authority() {
+            if (!this.field) {
+                return
+            }
+            const data = await fetch(`/admin/authority/${this.field}`)
+            this.permissions = data
         },
         lineUp() {
             this.queue = [...this.queue, ...this.checkList]

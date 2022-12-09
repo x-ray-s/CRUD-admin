@@ -24,6 +24,14 @@ export default {
             createStore,
         }
     },
+    computed: {
+        deletable () {
+            return this.store.permissions.delete
+        },
+        writable () {
+            return this.store.permissions.write
+        }
+    },
 
 
     watch: {
@@ -33,6 +41,7 @@ export default {
         },
         'store.field'(v) {
             this.store.headersReset()
+            this.store.authority()
             this.store.headers(TYPE)
             this.store.list()
         },
@@ -57,6 +66,7 @@ export default {
     <div>
         <div class="mb-4 flex justify-end">
             <label
+                v-if="writable"
                 for="create-drawer"
                 class="drawer-button btn btn-primary mr-3"
                 @click="createStore.model = store.field"
@@ -68,7 +78,7 @@ export default {
             >filter</label>
 
             <label
-                v-if="store.checkList.length > 0"
+                v-if="deletable && store.checkList.length > 0"
                 for="delete-modal"
                 class="btn"
                 @click="confirmDelete"
@@ -76,7 +86,7 @@ export default {
         </div>
         <table class="table w-full mb-4">
             <thead>
-                <th>
+                <th v-if="deletable">
                     <input
                         type="checkbox"
                         class="checkbox align-middle"
@@ -98,7 +108,7 @@ export default {
                     :key="item.id"
                     :class="'hover'"
                 >
-                    <td>
+                    <td v-if="deletable">
                         <input
                             type="checkbox"
                             class="checkbox"

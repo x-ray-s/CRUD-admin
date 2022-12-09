@@ -1,5 +1,5 @@
-import { defineStore } from 'pinia'
 import { useLocalStorage } from '@vueuse/core'
+import { defineStore } from 'pinia'
 
 export const useAuthStore = defineStore('auth', {
     state: () => ({
@@ -10,8 +10,8 @@ export const useAuthStore = defineStore('auth', {
             const { token, error, msg } = await fetch('/admin/_login', {
                 method: 'POST',
                 data: {
-                    password: password,
-                    username: username,
+                    password,
+                    username,
                 },
                 headers: {
                     'content-type': 'application/json',

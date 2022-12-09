@@ -1,5 +1,6 @@
 const _fetch = window.fetch
 const _isObject = (v) => typeof v === 'object'
+const TOKEN_KEY = 'pinia/auth/token'
 const fetch = (url, options = {}) => {
     const {
         method = 'GET',
@@ -49,7 +50,7 @@ const fetch = (url, options = {}) => {
             case 'application/json':
                 requestOptions.body = isDataObject ? JSON.stringify(data) : data
                 break
-            case 'application/x-www-form-urlencoded':
+            case 'application/x-www-form-urlencoded': {
                 const form = new URLSearchParams(isDataObject ? '' : data)
                 if (isDataObject) {
                     Object.keys(data).forEach((key) => {
@@ -58,7 +59,9 @@ const fetch = (url, options = {}) => {
                 }
                 requestOptions.body = form.toString()
                 break
-            case 'multipart/form-data':
+            }
+
+            case 'multipart/form-data': {
                 const formData = new FormData()
                 if (isDataObject) {
                     Object.keys(data).forEach((key) => {
@@ -68,6 +71,8 @@ const fetch = (url, options = {}) => {
                 requestOptions.body = formData
                 _headers.delete('content-type')
                 break
+            }
+
             default:
                 requestOptions.body = data
         }
@@ -77,6 +82,10 @@ const fetch = (url, options = {}) => {
     // response
     return _fetch(new Request(_url, requestOptions)).then((r) => {
         if (!r.ok) {
+            if (r.status === 401) {
+                localStorage.removeItem(TOKEN_KEY)
+                window.location.reload()
+            }
             throw new Error(r.statusText)
         }
         if (responseType === 'json') {
@@ -90,7 +99,7 @@ window.fetch = (url, options = {}) =>
     fetch(url, {
         baseURL: 'http://localhost:4000',
         headers: {
-            authorization: 'Bearer ' + localStorage.getItem('pinia/auth/token'),
+            authorization: 'Bearer ' + localStorage.getItem(TOKEN_KEY),
         },
         ...options,
     })

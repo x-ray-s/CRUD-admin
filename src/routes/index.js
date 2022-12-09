@@ -1,8 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'
+
 import { useAuthStore } from '@/stores/auth'
-import Model from './Model.vue'
-import Login from './Login.vue'
+
 import Home from './Home.vue'
+import Login from './Login.vue'
+import Model from './Model.vue'
 import Read from './Read.vue'
 
 export const routes = [
